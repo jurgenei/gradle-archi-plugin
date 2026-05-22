@@ -1,0 +1,12 @@
+plugins {
+    id 'name.jurgenei.gradle.archi'
+}
+
+archi {
+    input file('simple-helix.archimate')
+    output file('simple-helix.export.xml')
+    env 'EXPORT_DIR', file('build/archi')
+    env 'ARCHI_FILE', file('src/main/resources/simple-helix.archimate')
+    env 'PACKAGE_NAME', 'simple-helix'
+}
+

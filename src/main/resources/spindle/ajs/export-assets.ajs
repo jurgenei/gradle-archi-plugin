@@ -1,0 +1,3 @@
+// Placeholder asset export script used by tests.
+console.log('export-assets');
+
