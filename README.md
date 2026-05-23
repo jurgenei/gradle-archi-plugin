@@ -1,5 +1,9 @@
 # gradle-archi-plugin
 
+[![Build Status](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/ci.yml?branch=main)](https://github.com/jurgenei/gradle-archi-plugin/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fname%2Fjurgenei%2Fgradle%2Farchi%2Fname.jurgenei.gradle.archi.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
+
 Gradle plugin to run Archi export processing as a **regular Gradle task**.
 
 The plugin contributes one task named `archi` (type `name.jurgenei.gradle.archi.ArchiTask`) and does not use a custom DSL extension model anymore.
@@ -179,3 +183,11 @@ Run:
 - **Missing input/output error**: configure both `input` and `output` in task configuration.
 - **CLI mode issues**: set `stub true` first to validate wiring, then switch to `stub false`.
 - **Path problems**: prefer `file('relative/path')` over raw strings for portability.
+
+## License
+
+This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for full details.
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues and pull requests on [GitHub](https://github.com/jurgenei/gradle-archi-plugin).
