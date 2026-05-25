@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,7 +34,13 @@ class ArchimateRunnerTest {
         File output = new File(dir, "out.xml");
 
         Project project = ProjectBuilder.builder().build();
-        new ArchimateRunner(new CliArchiBackend()).run(project, input, output, null, null);
+        new ArchimateRunner(new CliArchiBackend()).run(
+                project,
+                input,
+                output,
+                List.of(),
+                Map.of("ARCHI_USE_MOCK", "true")
+        );
 
         assertTrue(output.exists());
         assertTrue(Files.readString(output.toPath()).contains("http://www.opengroup.org/xsd/archimate/3.0/"));

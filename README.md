@@ -79,7 +79,7 @@ plugins {
 - `output(Object)` **required**: export output file.
 - `stub(boolean)` optional, default `true`.
 - `script(Object)` optional: adds `--script.runScript <value>`.
-- `excel(Object)` optional: adds `---excel.export <value>`.
+- `excel(Object)` optional: adds `--excel.export <value>`.
 - `arg(String)` optional, repeatable: appends raw CLI args.
 - `env(String, Object)` optional, repeatable: sets process environment vars.
 
@@ -139,7 +139,42 @@ and executes:
 
 - `scripts/archi-launcher.sh`
 
-with mapped environment values including `HELIX_HOME` and `SPINDLE_HOME`.
+with mapped environment values including `ARCHI_FILE`, `EXPORT_DIR`, `PACKAGE_NAME`, `HELIX_HOME`, and `ARCHI_RUNTIME`.
+
+Before launching Archi, the launcher installs all bundled `.archiplugin` files with:
+
+- `bin/install-archiplugin.sh`
+
+The default script for exports is:
+
+- `ajs/export-assets.ajs`
+
+It loads the model from `ARCHI_FILE` and exports PDF/XML/XLSX artifacts into `EXPORT_DIR`.
+
+## Scenarios
+
+### Local Host Archi (macOS/Linux)
+
+```bash
+./gradlew archi
+```
+
+Use `stub false` in your `archi { ... }` task configuration.
+
+Set `ARCHI_HOME` if Archi is not in a default location:
+
+```bash
+ARCHI_HOME="$HOME/Applications/Archi.app" ./gradlew archi
+```
+
+### Containerized Archi
+
+```bash
+docker compose build archi
+docker compose run --rm archi
+```
+
+This uses `xvfb-run` for headless Linux execution and writes exports under `build/archi-export`.
 
 ## Development
 

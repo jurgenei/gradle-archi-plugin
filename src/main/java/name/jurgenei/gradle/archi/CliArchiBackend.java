@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,11 +26,24 @@ public class CliArchiBackend implements ArchiBackend {
     public void run(Project project, File input, File output, List<String> args, Map<String, Object> envs) {
         Logger log = project.getLogger();
 
-        List<String> cmd = new ArrayList<>();
-        File spindleDirectory = resolveSpindleHome(project, log);
-        File executable = new File(spindleDirectory, "scripts/archi-launcher.sh");
+        List<String> effectiveArgs = new ArrayList<>(args);
+        File archiDirectory = resolveArchiRuntime(project, log);
+        File launcher = new File(archiDirectory, "scripts/archi-launcher.sh");
+        boolean useMock = "true".equalsIgnoreCase(String.valueOf(envs.getOrDefault("ARCHI_USE_MOCK", "false")));
+        if (useMock) {
+            launcher = new File(archiDirectory, "scripts/archi-launcher-mock.sh");
+        }
 
-        cmd.add(executable.getAbsolutePath());
+        if (!containsScriptArg(effectiveArgs)) {
+            File defaultScript = new File(archiDirectory, "ajs/export-assets.ajs");
+            if (defaultScript.isFile()) {
+                effectiveArgs.add("--script.runScript");
+                effectiveArgs.add(defaultScript.getAbsolutePath());
+            }
+        }
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add(launcher.getAbsolutePath());
 
         if (input != null) {
             cmd.add("--loadModel");
@@ -44,14 +58,24 @@ public class CliArchiBackend implements ArchiBackend {
             cmd.add(output.getAbsolutePath());
         }
 
-        cmd.addAll(args);
+        cmd.addAll(effectiveArgs);
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.directory(spindleDirectory);
+        pb.directory(archiDirectory);
 
+        String packageName = inferPackageName(input);
+        File exportDir = output != null && output.getParentFile() != null
+                ? output.getParentFile()
+                : new File(project.getBuildDir(), "archi-export");
+        exportDir.mkdirs();
+
+        pb.environment().put("ARCHI_HOME", resolveArchiHome(log));
         pb.environment().put("HELIX_HOME", project.getProjectDir().getAbsolutePath());
-        pb.environment().put("SPINDLE_HOME", spindleDirectory.getAbsolutePath());
-        pb.environment().put("PATH", "/bin:/usr/bin");
+        pb.environment().put("ARCHI_RUNTIME", archiDirectory.getAbsolutePath());
+        pb.environment().put("ARCHI_FILE", input != null ? input.getAbsolutePath() : "");
+        pb.environment().put("EXPORT_DIR", exportDir.getAbsolutePath());
+        pb.environment().put("PACKAGE_NAME", packageName);
+        pb.environment().put("EXPORT_LOG", new File(exportDir, "logs").getAbsolutePath());
         envs.forEach((key, value) -> {
             String expandedValue = value instanceof File file ? file.getAbsolutePath() : String.valueOf(value);
             pb.environment().put(key, expandedValue);
@@ -83,7 +107,88 @@ public class CliArchiBackend implements ArchiBackend {
         }
     }
 
-    private File resolveSpindleHome(Project project, Logger log) {
+    private static boolean containsScriptArg(List<String> args) {
+        for (String arg : args) {
+            if ("--script.runScript".equals(arg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String inferPackageName(File input) {
+        if (input == null) {
+            return "archi-export";
+        }
+        String fileName = input.getName();
+        int idx = fileName.lastIndexOf('.');
+        return idx > 0 ? fileName.substring(0, idx) : fileName;
+    }
+
+    private String resolveArchiHome(Logger log) {
+        String archiHome = System.getenv("ARCHI_HOME");
+        if (archiHome != null && !archiHome.isEmpty()) {
+            log.info("Using ARCHI_HOME from environment: {}", archiHome);
+            return archiHome;
+        }
+
+        String osName = System.getProperty("os.name", "").toLowerCase();
+        if (osName.contains("mac")) {
+            String[] candidates = {
+                    System.getProperty("user.home") + "/Applications/Archi.app",
+                    "/Applications/Archi.app"
+            };
+            for (String candidate : candidates) {
+                if (new File(candidate).exists()) {
+                    log.info("Found Archi on macOS: {}", candidate);
+                    return candidate;
+                }
+            }
+        } else if (osName.contains("linux")) {
+            String[] candidates = {
+                    "/opt/archi",
+                    "/usr/local/archi",
+                    System.getProperty("user.home") + "/.archi"
+            };
+            for (String candidate : candidates) {
+                if (new File(candidate).exists()) {
+                    log.info("Found Archi on Linux: {}", candidate);
+                    return candidate;
+                }
+            }
+        }
+
+        if (isInDocker()) {
+            log.info("Detected container environment, using default /opt/archi");
+            return "/opt/archi";
+        }
+
+        log.warn("Could not locate Archi installation. Set ARCHI_HOME environment variable.");
+        return "";
+    }
+
+    private static boolean isInDocker() {
+        Path dockerEnv = Paths.get("/.dockerenv");
+        if (Files.exists(dockerEnv)) {
+            return true;
+        }
+        String cgroup = readCgroup();
+        return cgroup.contains("docker") || cgroup.contains("containerd") || cgroup.contains("kubepods");
+    }
+
+    private static String readCgroup() {
+        Path cgroup = Paths.get("/proc/1/cgroup");
+        if (!Files.isReadable(cgroup)) {
+            return "";
+        }
+        try {
+            return Files.readString(cgroup).toLowerCase(Locale.ROOT);
+        } catch (IOException ignored) {
+            return "";
+        }
+    }
+
+    private File resolveArchiRuntime(Project project, Logger log) {
         Path runtimePath = project.getLayout().getBuildDirectory().dir("archi-runtime").get().getAsFile().toPath();
         Path marker = runtimePath.resolve(".archi-runtime");
 
@@ -93,7 +198,7 @@ public class CliArchiBackend implements ArchiBackend {
 
         try {
             Files.createDirectories(runtimePath);
-            extractTree("/spindle", runtimePath);
+            extractTree("/archi", runtimePath);
             Files.writeString(marker, "ready");
         } catch (Exception e) {
             throw new RuntimeException("Failed to prepare Archi runtime", e);
@@ -144,5 +249,3 @@ public class CliArchiBackend implements ArchiBackend {
         });
     }
 }
-
-

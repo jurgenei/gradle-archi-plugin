@@ -1,0 +1,80 @@
+// Export Archi model assets using environment-provided paths.
+const File = Java.type("java.io.File");
+
+const exportDir = java.lang.System.getenv("EXPORT_DIR");
+const archiFile = java.lang.System.getenv("ARCHI_FILE");
+const packageName = java.lang.System.getenv("PACKAGE_NAME") || "archi-export";
+
+const pdfDir = exportDir + "/pdf/";
+const prefix = exportDir + "/" + packageName;
+
+createDir(exportDir);
+const myModel = loadModel(archiFile);
+exportPDFs(myModel, exportDir);
+exportOpenExchangeFile(myModel, new File(prefix + ".export.xml"));
+exportExcel(myModel, new File(prefix + ".xlsx"));
+
+function loadModel(modelPath) {
+    const model = $.model.load(modelPath);
+    model.setAsCurrent();
+    console.log("Loaded model: " + model.name);
+    return model;
+}
+
+function createDir(dirName) {
+    const dir = new File(dirName);
+    if (!dir.exists()) {
+        dir.mkdirs();
+    }
+    return dir;
+}
+
+function exportPDFs(modelToExport) {
+    const views = modelToExport.find("view");
+    createDir(pdfDir);
+
+    views.each(function(view) {
+        const filename = view.name.replace(/[^a-zA-Z0-9-_]/g, "_") + ".pdf";
+        const filepath = pdfDir + filename;
+        console.log("Exporting PDF: " + filepath);
+        $.model.renderViewToPDF(view, filepath);
+    });
+}
+
+function exportOpenExchangeFile(modelToExport, exchangeOutputFile) {
+    const method = modelToExport.getClass().getDeclaredMethod("getEObject");
+    method.setAccessible(true);
+    const impl = method.invoke(modelToExport);
+
+    const bundle = org.eclipse.core.runtime.Platform
+        .getBundle("org.opengroup.archimate.xmlexchange");
+    const exporterClass = bundle.loadClass("org.opengroup.archimate.xmlexchange.XMLModelExporter");
+    const exporter = exporterClass.getDeclaredConstructor().newInstance();
+
+    exporter.setSaveOrganisation(false);
+    exporter.setIncludeXSD(false);
+    createDir(exportDir);
+    exporter.exportModel(impl, exchangeOutputFile);
+    console.log("XML exchange export complete: " + exchangeOutputFile);
+}
+
+function exportExcel(modelToExport, excelFile) {
+    const bundle = org.eclipse.core.runtime.Platform
+        .getBundle("com.archimatetool.excel");
+    const exporterClass = bundle.loadClass("com.archimatetool.excel.ExcelExporter");
+    const IWorkbenchWindow = Java.type("org.eclipse.ui.IWorkbenchWindow");
+    const IArchimateModel = Java.type("com.archimatetool.model.IArchimateModel");
+
+    const modelMethod = modelToExport.getClass().getDeclaredMethod("getEObject");
+    modelMethod.setAccessible(true);
+    const modelImpl = modelMethod.invoke(modelToExport);
+
+    const exporter = exporterClass.getDeclaredConstructor().newInstance();
+    const exportMethod = exporterClass.getDeclaredMethod("export", IWorkbenchWindow, IArchimateModel, File);
+    exportMethod.setAccessible(true);
+
+    const workbenchNull = IWorkbenchWindow.class.cast(null);
+    exportMethod.invoke(exporter, workbenchNull, modelImpl, excelFile);
+    console.log("Excel export complete: " + excelFile);
+}
+

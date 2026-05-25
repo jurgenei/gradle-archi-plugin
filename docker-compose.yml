@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  archi:
+    build: .
+    container_name: gradle-archi-plugin-test
+    environment:
+      ARCHI_HOME: /opt/archi
+      ARCHI_FILE: /workspace/src/test/resources/archi2/simple-helix.archimate
+      EXPORT_DIR: /workspace/build/archi-export
+      PACKAGE_NAME: simple-helix
+      ARCHI_RUNTIME: /workspace/src/main/resources/archi
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    command:
+      - /workspace/src/main/resources/archi/scripts/archi-launcher.sh
+      - --script.runScript
+      - /workspace/src/main/resources/archi/ajs/export-assets.ajs
+

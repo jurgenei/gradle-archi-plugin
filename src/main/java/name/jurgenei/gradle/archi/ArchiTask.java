@@ -95,7 +95,7 @@ public abstract class ArchiTask extends DefaultTask {
         }
         String excel = getExcel().getOrElse("");
         if (!excel.isEmpty()) {
-            resolvedArgs.add("---excel.export");
+            resolvedArgs.add("--excel.export");
             resolvedArgs.add(excel);
         }
 
