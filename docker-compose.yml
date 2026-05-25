@@ -1,6 +1,7 @@
 services:
   archi:
     build: .
+    platform: linux/amd64
     container_name: gradle-archi-plugin-test
     environment:
       ARCHI_HOME: /opt/archi
@@ -12,8 +13,9 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
-    command:
+    entrypoint:
       - /workspace/src/main/resources/archi/scripts/archi-launcher.sh
+    command:
       - --script.runScript
       - /workspace/src/main/resources/archi/ajs/export-assets.ajs
 

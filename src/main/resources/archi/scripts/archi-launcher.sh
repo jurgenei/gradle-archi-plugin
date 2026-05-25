@@ -156,6 +156,7 @@ main() {
   export EXPORT_LOG="${EXPORT_LOG:-$EXPORT_DIR/logs}"
 
   mkdir -p "$EXPORT_DIR" "$EXPORT_LOG"
+  mkdir -p "$HOME/Documents/Archi/scripts"
 
   install_plugins
   run_archi "$@"
