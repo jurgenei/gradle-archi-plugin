@@ -1,14 +1,14 @@
-version: '3.9'
 services:
   archi:
     build: .
     container_name: gradle-archi-plugin-test
     environment:
       ARCHI_HOME: /opt/archi
-      ARCHI_FILE: /workspace/src/test/resources/archi2/simple-helix.archimate
-      EXPORT_DIR: /workspace/build/archi-export
-      PACKAGE_NAME: simple-helix
-      ARCHI_RUNTIME: /workspace/src/main/resources/archi
+      ARCHI_FILE: ${ARCHI_FILE:-/workspace/build/docker-input/model.archimate}
+      EXPORT_DIR: ${EXPORT_DIR:-/workspace/build/archi-export}
+      PACKAGE_NAME: ${PACKAGE_NAME:-model}
+      EXPORT_LOG: ${EXPORT_LOG:-/workspace/build/archi-export/logs}
+      ARCHI_RUNTIME: ${ARCHI_RUNTIME:-/workspace/src/main/resources/archi}
     volumes:
       - ./:/workspace
     working_dir: /workspace

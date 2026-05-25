@@ -176,6 +176,22 @@ docker compose run --rm archi
 
 This uses `xvfb-run` for headless Linux execution and writes exports under `build/archi-export`.
 
+### Local Docker Run + Verification
+
+Use the helper script to run a full container export and validate XML/XLSX/PDF outputs:
+
+```bash
+./scripts/docker-local-test.sh /absolute/path/to/model.archimate
+```
+
+Example:
+
+```bash
+./scripts/docker-local-test.sh /Users/cs79en/Developer/Projects/lineage/P01744-vortex-archi-lineage-processing-model/model.archimate
+```
+
+If Docker daemon is not running, start Docker Desktop first.
+
 ## Development
 
 Build and test plugin:
