@@ -31,7 +31,9 @@ export PACKAGE_NAME
 
 cd "$ROOT_DIR"
 
-docker compose build archi
+if [[ "${SKIP_DOCKER_BUILD:-0}" != "1" ]]; then
+  docker compose build archi
+fi
 docker compose run --rm archi
 
 XML_EXPORT="$EXPORT_DIR_HOST/$PACKAGE_NAME.export.xml"

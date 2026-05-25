@@ -1,6 +1,7 @@
 # gradle-archi-plugin
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/ci.yml?branch=main)](https://github.com/jurgenei/gradle-archi-plugin/actions)
+[![Docker Export Test](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/docker-test.yml?branch=main&label=Docker%20Export%20Test)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/docker-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fname%2Fjurgenei%2Fgradle%2Farchi%2Fname.jurgenei.gradle.archi.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
 
@@ -191,6 +192,20 @@ Example:
 ```
 
 If Docker daemon is not running, start Docker Desktop first.
+
+## GitHub Actions Docker Test
+
+Workflow file:
+
+- `.github/workflows/docker-test.yml`
+
+What it does:
+
+- Downloads a known-good sample model (`Archisurance.archimate`).
+- Builds the Docker image on `linux/amd64`.
+- Reuses Docker Buildx cache with `cache-from/cache-to: type=gha`.
+- Runs the same local script (`scripts/docker-local-test.sh`) with `SKIP_DOCKER_BUILD=1`.
+- Uploads `build/archi-export/` as an artifact.
 
 ## Development
 
