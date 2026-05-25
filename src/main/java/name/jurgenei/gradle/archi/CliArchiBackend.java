@@ -45,25 +45,12 @@ public class CliArchiBackend implements ArchiBackend {
         List<String> cmd = new ArrayList<>();
         cmd.add(launcher.getAbsolutePath());
 
-        if (input != null) {
-            cmd.add("--loadModel");
-            cmd.add(input.getAbsolutePath());
-        }
-        if (output != null) {
-            cmd.add("--xmlexchange.export");
-            File parent = output.getParentFile();
-            if (parent != null) {
-                parent.mkdirs();
-            }
-            cmd.add(output.getAbsolutePath());
-        }
-
         cmd.addAll(effectiveArgs);
 
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(archiDirectory);
 
-        String packageName = inferPackageName(input);
+        String packageName = inferPackageName(input, output);
         File exportDir = output != null && output.getParentFile() != null
                 ? output.getParentFile()
                 : new File(project.getBuildDir(), "archi-export");
@@ -75,6 +62,7 @@ public class CliArchiBackend implements ArchiBackend {
         pb.environment().put("ARCHI_FILE", input != null ? input.getAbsolutePath() : "");
         pb.environment().put("EXPORT_DIR", exportDir.getAbsolutePath());
         pb.environment().put("PACKAGE_NAME", packageName);
+        pb.environment().put("ARCHI_OUTPUT_FILE", output != null ? output.getAbsolutePath() : "");
         pb.environment().put("EXPORT_LOG", new File(exportDir, "logs").getAbsolutePath());
         envs.forEach((key, value) -> {
             String expandedValue = value instanceof File file ? file.getAbsolutePath() : String.valueOf(value);
@@ -116,11 +104,15 @@ public class CliArchiBackend implements ArchiBackend {
         return false;
     }
 
-    private static String inferPackageName(File input) {
-        if (input == null) {
+    private static String inferPackageName(File input, File output) {
+        String fileName;
+        if (output != null) {
+            fileName = output.getName().replace(".export.xml", "");
+        } else if (input != null) {
+            fileName = input.getName();
+        } else {
             return "archi-export";
         }
-        String fileName = input.getName();
         int idx = fileName.lastIndexOf('.');
         return idx > 0 ? fileName.substring(0, idx) : fileName;
     }

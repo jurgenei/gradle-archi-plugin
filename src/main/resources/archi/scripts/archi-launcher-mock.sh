@@ -1,31 +1,14 @@
 #!/bin/sh
 set -eu
 
-input=""
-output=""
+input="${ARCHI_FILE:-}"
+export_dir="${EXPORT_DIR:-$(pwd)/build/archi-export}"
+package_name="${PACKAGE_NAME:-archi-export}"
+output="${ARCHI_OUTPUT_FILE:-$export_dir/$package_name.export.xml}"
+pdf_dir="$export_dir/pdf"
+excel_file="$export_dir/$package_name.xlsx"
 
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --loadModel)
-      input="$2"
-      shift 2
-      ;;
-    --xmlexchange.export)
-      output="$2"
-      shift 2
-      ;;
-    *)
-      shift
-      ;;
-  esac
-done
-
-if [ -z "$output" ]; then
-  echo "Missing --xmlexchange.export argument" >&2
-  exit 1
-fi
-
-mkdir -p "$(dirname "$output")"
+mkdir -p "$export_dir" "$pdf_dir" "$(dirname "$output")"
 
 cat > "$output" <<'EOF'
 <model xmlns="http://www.opengroup.org/xsd/archimate/3.0/">
@@ -33,8 +16,14 @@ cat > "$output" <<'EOF'
 </model>
 EOF
 
+echo "mock-pdf" > "$pdf_dir/mock-view.pdf"
+echo "mock-xlsx" > "$excel_file"
+
 echo "Exported Archi model to $output"
+echo "Exported mock PDF to $pdf_dir/mock-view.pdf"
+echo "Exported mock XLSX to $excel_file"
+
 if [ -n "$input" ]; then
-  echo "Loaded model from $input"
+  echo "Model loaded by script from $input"
 fi
 
