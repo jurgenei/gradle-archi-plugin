@@ -1,0 +1,10 @@
+plugins {
+    id 'name.jurgenei.gradle.archi'
+}
+
+archi {
+    input file('../../src/test/resources/archi2/simple-helix.archimate')
+    output file('build/archi-export/simple-helix.export.xml')
+    stub true
+}
+

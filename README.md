@@ -91,6 +91,10 @@ If `input` or `output` is missing, task execution fails with:
 
 ## Examples
 
+Ready-to-run sample consumer projects are available in:
+
+- `samples/`
+
 ### 1) Stub Mode (Safe Local/CI Default)
 
 ```groovy

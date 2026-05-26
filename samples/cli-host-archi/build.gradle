@@ -1,0 +1,21 @@
+plugins {
+    id 'name.jurgenei.gradle.archi'
+}
+
+def modelPath = System.getenv('MODEL_FILE')
+if (!modelPath) {
+    throw new GradleException('Set MODEL_FILE environment variable to an .archimate model path')
+}
+
+def modelFile = file(modelPath)
+def exportName = modelFile.name.endsWith('.archimate') ? modelFile.name - '.archimate' : modelFile.name
+
+archi {
+    input modelFile
+    output file("build/archi-export/${exportName}.export.xml")
+    stub false
+    env 'ARCHI_FILE', modelFile
+    env 'PACKAGE_NAME', exportName
+    env 'EXPORT_DIR', file('build/archi-export')
+}
+

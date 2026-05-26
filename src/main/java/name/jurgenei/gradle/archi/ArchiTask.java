@@ -7,7 +7,10 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,9 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@DisableCachingByDefault(because = "Archi execution depends on external runtime state and environment")
 public abstract class ArchiTask extends DefaultTask {
 
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract Property<File> getInputFile();
 
     @OutputFile
