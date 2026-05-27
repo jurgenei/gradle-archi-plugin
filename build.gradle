@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'signing'
 }
 
 group = 'name.jurgenei.gradle'
@@ -24,6 +25,54 @@ gradlePlugin {
             id = 'name.jurgenei.gradle.archi'
             implementationClass = 'name.jurgenei.gradle.archi.ArchiGradlePlugin'
         }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'Archi Plugin'
+                description = 'Gradle plugin for Archi architecture description'
+                url = 'https://github.com/jurgenei/gradle-archi-plugin'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'jurgenei'
+                        name = 'Jurgen Hildebrand'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:https://github.com/jurgenei/gradle-archi-plugin.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/jurgenei/gradle-archi-plugin.git'
+                    url = 'https://github.com/jurgenei/gradle-archi-plugin'
+                }
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("publish") }
+    def signingKey = findProperty("signingKey")
+    def signingPassword = findProperty("signingPassword")
+    if (signingKey && signingPassword) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.mavenJava
     }
 }
 
