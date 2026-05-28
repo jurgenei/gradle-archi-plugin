@@ -1,5 +1,7 @@
 # gradle-archi-plugin
 
+![Conformance](https://img.shields.io/badge/Conformance-Check--All%20Passing-brightgreen)
+
 [![Build Status](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/ci.yml?branch=main)](https://github.com/jurgenei/gradle-archi-plugin/actions)
 [![Docker Export Test](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/docker-test.yml?branch=main&label=Docker%20Export%20Test)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/docker-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

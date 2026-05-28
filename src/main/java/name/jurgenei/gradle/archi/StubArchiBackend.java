@@ -20,8 +20,8 @@ public class StubArchiBackend implements ArchiBackend {
                 content = Files.readString(input.toPath()).replace("</", "<!--processed--></");
             }
             File parent = output.getParentFile();
-            if (parent != null) {
-                parent.mkdirs();
+            if (parent != null && !parent.exists() && !parent.mkdirs()) {
+                throw new RuntimeException("Failed to create output directory: " + parent.getAbsolutePath());
             }
             Files.writeString(output.toPath(), content);
         } catch (Exception e) {

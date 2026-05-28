@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -53,8 +54,10 @@ public class CliArchiBackend implements ArchiBackend {
         String packageName = inferPackageName(input, output);
         File exportDir = output != null && output.getParentFile() != null
                 ? output.getParentFile()
-                : new File(project.getBuildDir(), "archi-export");
-        exportDir.mkdirs();
+                : project.getLayout().getBuildDirectory().dir("archi-export").get().getAsFile();
+        if (!exportDir.exists() && !exportDir.mkdirs()) {
+            throw new RuntimeException("Failed to create export directory: " + exportDir.getAbsolutePath());
+        }
 
         pb.environment().put("ARCHI_HOME", resolveArchiHome(log));
         pb.environment().put("HELIX_HOME", project.getProjectDir().getAbsolutePath());
@@ -71,16 +74,20 @@ public class CliArchiBackend implements ArchiBackend {
 
         try {
             Process process = pb.start();
-            CompletableFuture<Void> stdout = CompletableFuture.runAsync(() ->
-                    new BufferedReader(new InputStreamReader(process.getInputStream()))
-                            .lines()
-                            .forEach(log::info)
-            );
-            CompletableFuture<Void> stderr = CompletableFuture.runAsync(() ->
-                    new BufferedReader(new InputStreamReader(process.getErrorStream()))
-                            .lines()
-                            .forEach(log::error)
-            );
+            CompletableFuture<Void> stdout = CompletableFuture.runAsync(() -> {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                    reader.lines().forEach(log::info);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to read launcher stdout", e);
+                }
+            });
+            CompletableFuture<Void> stderr = CompletableFuture.runAsync(() -> {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
+                    reader.lines().forEach(log::error);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to read launcher stderr", e);
+                }
+            });
 
             int exit = process.waitFor();
             CompletableFuture.allOf(stdout, stderr).join();
@@ -160,10 +167,6 @@ public class CliArchiBackend implements ArchiBackend {
     }
 
     private static boolean isInDocker() {
-        Path dockerEnv = Paths.get("/.dockerenv");
-        if (Files.exists(dockerEnv)) {
-            return true;
-        }
         String cgroup = readCgroup();
         return cgroup.contains("docker") || cgroup.contains("containerd") || cgroup.contains("kubepods");
     }
