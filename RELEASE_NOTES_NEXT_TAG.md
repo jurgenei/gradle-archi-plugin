@@ -13,3 +13,8 @@ Scope: `gradle-archi-plugin` release notes sync for `0.1.1`
 - This release-note update is a repository-level sync entry for the release branch.
 - No additional release-note-only behavioral deltas are introduced in this file.
 
+## Quality Automation
+
+- Updated `.github/workflows/qodana_code_quality.yml` branch triggers to align with CI (`main`, `release/**`).
+- Kept Qodana PR annotations/comments and write-level workflow permissions for review feedback.
+
