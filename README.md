@@ -4,6 +4,8 @@
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/ci.yml?branch=main)](https://github.com/jurgenei/gradle-archi-plugin/actions)
 [![Docker Export Test](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/docker-test.yml?branch=main&label=Docker%20Export%20Test)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/docker-test.yml)
+[![Coverage CI](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml/badge.svg)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml)
+[![Coverage](https://codecov.io/gh/jurgenei/gradle-archi-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/jurgenei/gradle-archi-plugin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fname%2Fjurgenei%2Fgradle%2Farchi%2Fname.jurgenei.gradle.archi.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
 
