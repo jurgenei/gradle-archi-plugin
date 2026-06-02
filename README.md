@@ -7,7 +7,7 @@
 [![Coverage CI](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml/badge.svg)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml)
 [![Coverage](https://codecov.io/gh/jurgenei/gradle-archi-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/jurgenei/gradle-archi-plugin)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fname%2Fjurgenei%2Fgradle%2Farchi%2Fname.jurgenei.gradle.archi.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
+[![Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/name.jurgenei.gradle.archi?label=Plugin%20Portal)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
 
 Gradle plugin to run Archi export processing as a **regular Gradle task**.
 

@@ -43,6 +43,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifactId = 'gradle-archi-plugin-impl'
 
             pom {
                 name = 'Archi Plugin'
@@ -175,6 +176,57 @@ tasks.register('coverage') {
     group = 'verification'
     description = 'Runs tests, generates JaCoCo report, and verifies minimum coverage threshold.'
     dependsOn tasks.named('jacocoTestCoverageVerification')
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('jacocoTestCoverageVerification')
+}
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+tasks.named('test') {
+    finalizedBy tasks.named('jacocoTestReport')
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn tasks.named('test')
+    classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
+    sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    dependsOn tasks.named('jacocoTestReport')
+    classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
+    sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
+    violationRules {
+        rule {
+            element = 'BUNDLE'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.20
+            }
+        }
+    }
+}
+
+if (tasks.findByName('coverage') == null) {
+    tasks.register('coverage') {
+        group = 'verification'
+        description = 'Runs tests, generates JaCoCo report, and verifies minimum coverage threshold.'
+        dependsOn tasks.named('jacocoTestCoverageVerification')
+    }
+} else {
+    tasks.named('coverage') {
+        dependsOn tasks.named('jacocoTestCoverageVerification')
+    }
 }
 
 tasks.named('check') {
