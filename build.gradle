@@ -175,10 +175,16 @@ tasks.named('jacocoTestCoverageVerification') {
     }
 }
 
-tasks.register('coverage') {
-    group = 'verification'
-    description = 'Runs tests, generates JaCoCo report, and verifies minimum coverage threshold.'
-    dependsOn tasks.named('jacocoTestCoverageVerification')
+if (tasks.findByName('coverage') == null) {
+    tasks.register('coverage') {
+        group = 'verification'
+        description = 'Runs tests, generates JaCoCo report, and verifies minimum coverage threshold.'
+        dependsOn tasks.named('jacocoTestCoverageVerification')
+    }
+} else {
+    tasks.named('coverage') {
+        dependsOn tasks.named('jacocoTestCoverageVerification')
+    }
 }
 
 tasks.named('check') {
