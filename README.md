@@ -5,7 +5,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/ci.yml?branch=main)](https://github.com/jurgenei/gradle-archi-plugin/actions)
 [![Docker Export Test](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/docker-test.yml?branch=main&label=Docker%20Export%20Test)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/docker-test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fplugins.gradle.org%2Fm2%2Fname%2Fjurgenei%2Fgradle%2Farchi%2Fname.jurgenei.gradle.archi.gradle.plugin%2Fmaven-metadata.xml)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
+[![Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/name.jurgenei.gradle.archi?label=Plugin%20Portal)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
 
 Gradle plugin to run Archi export processing as a **regular Gradle task**.
 
