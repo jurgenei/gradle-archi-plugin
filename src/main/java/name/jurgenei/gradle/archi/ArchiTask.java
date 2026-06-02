@@ -18,31 +18,72 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Task that runs Archi model export/transformation via configured backend.
+ */
 @DisableCachingByDefault(because = "Archi execution depends on external runtime state and environment")
 public abstract class ArchiTask extends DefaultTask {
 
+    /**
+     * Input model file.
+     *
+     * @return input file property.
+     */
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract Property<File> getInputFile();
 
+    /**
+     * Output file produced by Archi processing.
+     *
+     * @return output file property.
+     */
     @OutputFile
     public abstract Property<File> getOutputFile();
 
+    /**
+     * Chooses stub backend when true, CLI backend when false.
+     *
+     * @return stub toggle property.
+     */
     @Input
     public abstract Property<Boolean> getStub();
 
+    /**
+     * Optional script path passed to Archi.
+     *
+     * @return script property.
+     */
     @Input
     public abstract Property<String> getScript();
 
+    /**
+     * Optional Excel export target.
+     *
+     * @return excel export property.
+     */
     @Input
     public abstract Property<String> getExcel();
 
+    /**
+     * Additional backend arguments.
+     *
+     * @return argument list property.
+     */
     @Input
     public abstract ListProperty<String> getArgs();
 
+    /**
+     * Additional backend environment variables.
+     *
+     * @return environment map property.
+     */
     @Input
     public abstract MapProperty<String, String> getEnvs();
 
+    /**
+     * Creates task with default conventions.
+     */
     public ArchiTask() {
         getStub().convention(true);
         getArgs().convention(List.of());
@@ -51,38 +92,77 @@ public abstract class ArchiTask extends DefaultTask {
         getExcel().convention("");
     }
 
+    /**
+     * Sets input model file.
+     *
+     * @param value file path/object resolvable by Gradle.
+     */
     public void input(Object value) {
         getInputFile().set(getProject().file(value));
     }
 
+    /**
+     * Sets output file.
+     *
+     * @param value file path/object resolvable by Gradle.
+     */
     public void output(Object value) {
         getOutputFile().set(getProject().file(value));
     }
 
+    /**
+     * Sets stub backend usage.
+     *
+     * @param value true to use stub backend.
+     */
     public void stub(boolean value) {
         getStub().set(value);
     }
 
+    /**
+     * Sets script argument value.
+     *
+     * @param value script path/value.
+     */
     public void script(Object value) {
         getScript().set(String.valueOf(value));
     }
 
+    /**
+     * Sets Excel export argument value.
+     *
+     * @param value Excel target value.
+     */
     public void excel(Object value) {
         getExcel().set(String.valueOf(value));
     }
 
+    /**
+     * Appends a single backend argument.
+     *
+     * @param value argument value.
+     */
     public void arg(String value) {
         List<String> next = new ArrayList<>(getArgs().getOrElse(List.of()));
         next.add(value);
         getArgs().set(next);
     }
 
+    /**
+     * Adds/overrides one backend environment variable.
+     *
+     * @param name environment variable name.
+     * @param value environment variable value.
+     */
     public void env(String name, Object value) {
         Map<String, String> next = new HashMap<>(getEnvs().getOrElse(Map.of()));
         next.put(name, String.valueOf(value));
         getEnvs().set(next);
     }
 
+    /**
+     * Executes Archi processing using configured task inputs.
+     */
     @TaskAction
     public void runArchi() {
         if (!getInputFile().isPresent()) {

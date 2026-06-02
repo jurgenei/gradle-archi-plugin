@@ -7,7 +7,26 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Lightweight stub backend used for tests and local dry runs.
+ */
 public class StubArchiBackend implements ArchiBackend {
+
+    /**
+     * Creates the stub backend.
+     */
+    public StubArchiBackend() {
+    }
+
+    /**
+     * Writes a simple transformed output without invoking external Archi runtime.
+     *
+     * @param project current Gradle project.
+     * @param input source model input file.
+     * @param output target output file.
+     * @param args command arguments (unused by stub).
+     * @param envs environment variables (unused by stub).
+     */
     @Override
     public void run(Project project, File input, File output, List<String> args, Map<String, Object> envs) {
         if (input == null || output == null) {

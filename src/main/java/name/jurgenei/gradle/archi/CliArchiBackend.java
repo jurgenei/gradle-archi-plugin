@@ -22,7 +22,26 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * CLI-backed Archi execution backend.
+ */
 public class CliArchiBackend implements ArchiBackend {
+
+    /**
+     * Creates the CLI backend.
+     */
+    public CliArchiBackend() {
+    }
+
+    /**
+     * Executes Archi via bundled launcher scripts.
+     *
+     * @param project current Gradle project.
+     * @param input source model input file.
+     * @param output target output file.
+     * @param args command-line style arguments.
+     * @param envs environment variable map.
+     */
     @Override
     public void run(Project project, File input, File output, List<String> args, Map<String, Object> envs) {
         Logger log = project.getLogger();
