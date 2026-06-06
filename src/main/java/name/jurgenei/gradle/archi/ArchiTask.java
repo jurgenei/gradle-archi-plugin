@@ -4,12 +4,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.gradle.work.DisableCachingByDefault;
 
 import java.io.File;
@@ -29,6 +24,7 @@ public abstract class ArchiTask extends DefaultTask {
      *
      * @return input file property.
      */
+    @Optional
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract Property<File> getInputFile();
@@ -38,6 +34,7 @@ public abstract class ArchiTask extends DefaultTask {
      *
      * @return output file property.
      */
+    @Optional
     @OutputFile
     public abstract Property<File> getOutputFile();
 
@@ -165,12 +162,6 @@ public abstract class ArchiTask extends DefaultTask {
      */
     @TaskAction
     public void runArchi() {
-        if (!getInputFile().isPresent()) {
-            throw new IllegalStateException("archi.input is required");
-        }
-        if (!getOutputFile().isPresent()) {
-            throw new IllegalStateException("archi.output is required");
-        }
 
         List<String> resolvedArgs = new ArrayList<>(getArgs().getOrElse(List.of()));
         String script = getScript().getOrElse("");
@@ -187,11 +178,14 @@ public abstract class ArchiTask extends DefaultTask {
         Map<String, Object> envs = new HashMap<>();
         envs.putAll(getEnvs().getOrElse(Map.of()));
 
+        File inputFile = getInputFile().getOrNull();
+        File outputFile = getOutputFile().getOrNull();
+
         ArchiBackend backend = getStub().get() ? new StubArchiBackend() : new CliArchiBackend();
         new ArchimateRunner(backend).run(
                 getProject(),
-                getInputFile().get(),
-                getOutputFile().get(),
+                inputFile,
+                outputFile,
                 resolvedArgs,
                 envs
         );
