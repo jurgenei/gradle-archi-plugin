@@ -1,6 +1,6 @@
 package name.jurgenei.gradle.archi;
 
-import org.gradle.api.Project;
+import org.gradle.api.logging.Logger;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -21,16 +21,26 @@ public class StubArchiBackend implements ArchiBackend {
     /**
      * Writes a simple transformed output without invoking external Archi runtime.
      *
-     * @param project current Gradle project.
+     * @param projectDir current project directory.
+     * @param buildDir current build directory.
+     * @param logger Gradle logger.
      * @param input source model input file.
      * @param output target output file.
      * @param args command arguments (unused by stub).
      * @param envs environment variables (unused by stub).
      */
     @Override
-    public void run(Project project, File input, File output, List<String> args, Map<String, Object> envs) {
+    public void run(
+            File projectDir,
+            File buildDir,
+            Logger logger,
+            File input,
+            File output,
+            List<String> args,
+            Map<String, Object> envs
+    ) {
         if (input == null || output == null) {
-            project.getLogger().error("Input or output is null");
+            logger.error("Input or output is null");
             return;
         }
         String content = "<archimate>stub-processed</archimate>";

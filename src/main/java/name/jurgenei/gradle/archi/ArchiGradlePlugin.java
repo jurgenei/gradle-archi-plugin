@@ -21,7 +21,10 @@ public class ArchiGradlePlugin implements Plugin<Project> {
      */
     @Override
     public void apply(Project project) {
-        project.getTasks().register("archi", ArchiTask.class);
+        project.getTasks().register("archi", ArchiTask.class, task -> {
+            task.getProjectDir().convention(project.getLayout().getProjectDirectory());
+            task.getBuildDir().convention(project.getLayout().getBuildDirectory());
+        });
     }
 }
 

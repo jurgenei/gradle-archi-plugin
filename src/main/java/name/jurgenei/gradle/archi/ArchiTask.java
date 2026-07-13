@@ -1,6 +1,7 @@
 package name.jurgenei.gradle.archi;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
@@ -77,6 +78,22 @@ public abstract class ArchiTask extends DefaultTask {
      */
     @Input
     public abstract MapProperty<String, String> getEnvs();
+
+    /**
+     * Project directory used by the backend at execution time.
+     *
+     * @return project directory property.
+     */
+    @Internal
+    public abstract DirectoryProperty getProjectDir();
+
+    /**
+     * Build directory used by the backend at execution time.
+     *
+     * @return build directory property.
+     */
+    @Internal
+    public abstract DirectoryProperty getBuildDir();
 
     /**
      * Creates task with default conventions.
@@ -183,7 +200,9 @@ public abstract class ArchiTask extends DefaultTask {
 
         ArchiBackend backend = getStub().get() ? new StubArchiBackend() : new CliArchiBackend();
         new ArchimateRunner(backend).run(
-                getProject(),
+                getProjectDir().get().getAsFile(),
+                getBuildDir().get().getAsFile(),
+                getLogger(),
                 inputFile,
                 outputFile,
                 resolvedArgs,
