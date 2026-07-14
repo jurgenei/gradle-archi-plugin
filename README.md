@@ -39,7 +39,7 @@ Add the plugin and configure the `archi` task in `build.gradle`:
 
 ```groovy
 plugins {
-    id 'name.jurgenei.gradle.archi' version '0.1.0'
+    id 'name.jurgenei.gradle.archi' version '0.1.4'
 }
 
 archi {

@@ -57,16 +57,14 @@ jobs:
           name: jacoco-html-report
           path: build/reports/jacoco/test/html/
 
-      - name: Upload coverage to Codecov
-        if: ${{ env.CODECOV_TOKEN != '' }}
+      - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ env.CODECOV_TOKEN }}
-          files: build/reports/jacoco/test/jacocoTestReport.xml
-          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: jurgenei/gradle-archi-plugin
 
       - name: Codecov token missing notice
-        if: ${{ env.CODECOV_TOKEN == '' }}
+        if: ${{ secrets.CODECOV_TOKEN == '' }}
         run: |
           echo "### Codecov upload skipped" >> "$GITHUB_STEP_SUMMARY"
           echo "- Missing repository secret: CODECOV_TOKEN" >> "$GITHUB_STEP_SUMMARY"

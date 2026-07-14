@@ -1,6 +1,5 @@
 package name.jurgenei.gradle.archi;
 
-import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 
 import java.io.BufferedReader;
@@ -36,18 +35,28 @@ public class CliArchiBackend implements ArchiBackend {
     /**
      * Executes Archi via bundled launcher scripts.
      *
-     * @param project current Gradle project.
+     * @param projectDir current project directory.
+     * @param buildDir current build directory.
+     * @param logger Gradle logger.
      * @param input source model input file.
      * @param output target output file.
      * @param args command-line style arguments.
      * @param envs environment variable map.
      */
     @Override
-    public void run(Project project, File input, File output, List<String> args, Map<String, Object> envs) {
-        Logger log = project.getLogger();
+    public void run(
+            File projectDir,
+            File buildDir,
+            Logger logger,
+            File input,
+            File output,
+            List<String> args,
+            Map<String, Object> envs
+    ) {
+        Logger log = logger;
 
         List<String> effectiveArgs = new ArrayList<>(args);
-        File archiDirectory = resolveArchiRuntime(project, log);
+        File archiDirectory = resolveArchiRuntime(buildDir, log);
         File launcher = new File(archiDirectory, "scripts/archi-launcher.sh");
         boolean useMock = "true".equalsIgnoreCase(String.valueOf(envs.getOrDefault("ARCHI_USE_MOCK", "false")));
         if (useMock) {
@@ -73,13 +82,13 @@ public class CliArchiBackend implements ArchiBackend {
         String packageName = inferPackageName(input, output);
         File exportDir = output != null && output.getParentFile() != null
                 ? output.getParentFile()
-                : project.getLayout().getBuildDirectory().dir("archi-export").get().getAsFile();
+                : new File(buildDir, "archi-export");
         if (!exportDir.exists() && !exportDir.mkdirs()) {
             throw new RuntimeException("Failed to create export directory: " + exportDir.getAbsolutePath());
         }
 
         pb.environment().put("ARCHI_HOME", resolveArchiHome(log));
-        pb.environment().put("HELIX_HOME", project.getProjectDir().getAbsolutePath());
+        pb.environment().put("HELIX_HOME", projectDir.getAbsolutePath());
         pb.environment().put("ARCHI_RUNTIME", archiDirectory.getAbsolutePath());
         pb.environment().put("ARCHI_FILE", input != null ? input.getAbsolutePath() : "");
         pb.environment().put("EXPORT_DIR", exportDir.getAbsolutePath());
@@ -202,8 +211,8 @@ public class CliArchiBackend implements ArchiBackend {
         }
     }
 
-    private File resolveArchiRuntime(Project project, Logger log) {
-        Path runtimePath = project.getLayout().getBuildDirectory().dir("archi-runtime").get().getAsFile().toPath();
+    private File resolveArchiRuntime(File buildDir, Logger log) {
+        Path runtimePath = new File(buildDir, "archi-runtime").toPath();
         Path marker = runtimePath.resolve(".archi-runtime");
 
         if (Files.exists(marker)) {
