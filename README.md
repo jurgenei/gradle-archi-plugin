@@ -2,11 +2,13 @@
 
 ![Conformance](https://img.shields.io/badge/Conformance-Check--All%20Passing-brightgreen)
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/ci.yml?branch=main)](https://github.com/jurgenei/gradle-archi-plugin/actions)
+[![Build and Test](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/ci.yml)
 [![Docker Export Test](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/docker-test.yml?branch=main&label=Docker%20Export%20Test)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/docker-test.yml)
 [![Coverage CI](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml/badge.svg)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml)
 [![Coverage](https://codecov.io/gh/jurgenei/gradle-archi-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/jurgenei/gradle-archi-plugin)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/java-21+-green.svg)](https://www.oracle.com/java/)
+[![Gradle](https://img.shields.io/badge/gradle-9.5+-blue.svg)](https://gradle.org/)
 [![Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/name.jurgenei.gradle.archi?label=Plugin%20Portal)](https://plugins.gradle.org/plugin/name.jurgenei.gradle.archi)
 
 Gradle plugin to run Archi export processing as a **regular Gradle task**.
