@@ -1,11 +1,10 @@
 # gradle-archi-plugin
 
 ![Conformance](https://img.shields.io/badge/Conformance-Check--All%20Passing-brightgreen)
-
 [![Build and Test](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/ci.yml)
 [![Docker Export Test](https://img.shields.io/github/actions/workflow/status/jurgenei/gradle-archi-plugin/docker-test.yml?branch=main&label=Docker%20Export%20Test)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/docker-test.yml)
 [![Coverage CI](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml/badge.svg)](https://github.com/jurgenei/gradle-archi-plugin/actions/workflows/coverage.yml)
-[![Coverage](https://codecov.io/gh/jurgenei/gradle-archi-plugin/branch/main/graph/badge.svg)](https://codecov.io/gh/jurgenei/gradle-archi-plugin)
+[![codecov](https://codecov.io/gh/jurgenei/gradle-archi-plugin/graph/badge.svg?token=G02ENEYZI9)](https://codecov.io/gh/jurgenei/gradle-archi-plugin)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/java-21+-green.svg)](https://www.oracle.com/java/)
 [![Gradle](https://img.shields.io/badge/gradle-9.5+-blue.svg)](https://gradle.org/)
