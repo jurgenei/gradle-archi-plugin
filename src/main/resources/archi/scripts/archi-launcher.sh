@@ -4,6 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCHI_RUNTIME="${ARCHI_RUNTIME:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 ARCHI_APP=""
+ARCHI_DEFAULT_RELEASE_TAG="5.10_0"
+ARCHI_DEFAULT_VERSION="5.10.0"
 
 log() {
   echo "INFO: $*"
@@ -11,6 +13,52 @@ log() {
 
 warn() {
   echo "WARN: $*" >&2
+}
+
+is_ci() {
+  [[ "${GITHUB_ACTIONS:-}" == "true" || "${TF_BUILD:-}" == "true" || "${CI:-}" == "true" ]]
+}
+
+load_release_defaults() {
+  local release_file="$ARCHI_RUNTIME/conf/archi-release.env"
+  if [[ -f "$release_file" ]]; then
+    # shellcheck disable=SC1090
+    source "$release_file"
+  fi
+
+  ARCHI_RELEASE_TAG="${ARCHI_RELEASE_TAG:-${ARCHI_DEFAULT_RELEASE_TAG}}"
+  ARCHI_VERSION="${ARCHI_VERSION:-${ARCHI_DEFAULT_VERSION}}"
+}
+
+auto_install_archi_on_ci() {
+  if [[ "${ARCHI_AUTO_INSTALL:-true}" == "false" ]]; then
+    log "Skipping Archi auto-install because ARCHI_AUTO_INSTALL=false"
+    return
+  fi
+
+  if ! is_ci; then
+    return
+  fi
+
+  local install_dir="${ARCHI_HOME:-$HOME/.local/archi}"
+  if [[ -x "$install_dir/Archi" ]]; then
+    export ARCHI_HOME="$install_dir"
+    log "Using existing Archi installation at $ARCHI_HOME"
+    return
+  fi
+
+  load_release_defaults
+  local download_url="${ARCHI_DOWNLOAD_URL:-https://github.com/archimatetool/archi.io/releases/download/${ARCHI_RELEASE_TAG}/Archi-Linux64-${ARCHI_VERSION}.tgz}"
+  local archive
+  archive="$(mktemp /tmp/archi-XXXXXX.tgz)"
+
+  log "Auto-installing Archi ${ARCHI_VERSION} from ${download_url}"
+  mkdir -p "$install_dir"
+  curl -fsSL "$download_url" -o "$archive"
+  tar -xzf "$archive" -C "$install_dir" --strip-components=1
+  chmod +x "$install_dir/Archi"
+  rm -f "$archive"
+  export ARCHI_HOME="$install_dir"
 }
 
 detect_os() {
@@ -144,6 +192,8 @@ run_archi() {
 }
 
 main() {
+  auto_install_archi_on_ci
+
   ARCHI_APP="$(resolve_archi_executable || true)"
   if [[ -z "$ARCHI_APP" ]]; then
     echo "ERROR: Could not resolve Archi executable. Set ARCHI_HOME to your Archi install." >&2
@@ -163,4 +213,3 @@ main() {
 }
 
 main "$@"
-

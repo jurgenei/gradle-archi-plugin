@@ -1,8 +1,9 @@
 # Multi-stage Dockerfile for Archi with plugins
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
-ARG ARCHI_VERSION=5.9.0
-ARG ARCHI_DOWNLOAD_URL=https://github.com/archimatetool/archi.io/releases/download/${ARCHI_VERSION}/Archi-Linux64-${ARCHI_VERSION}.tgz
+ARG ARCHI_RELEASE_TAG=5.10_0
+ARG ARCHI_VERSION=5.10.0
+ARG ARCHI_DOWNLOAD_URL=https://github.com/archimatetool/archi.io/releases/download/${ARCHI_RELEASE_TAG}/Archi-Linux64-${ARCHI_VERSION}.tgz
 
 RUN apt-get update && apt-get install -y --no-install-recommends tar wget && rm -rf /var/lib/apt/lists/*
 
@@ -30,4 +31,3 @@ COPY --from=builder /opt/archi /opt/archi
 ENV ARCHI_HOME=/opt/archi PATH="/opt/archi:${PATH}"
 WORKDIR /workspace
 ENTRYPOINT ["/opt/archi/Archi", "-consoleLog", "-nosplash"]
-

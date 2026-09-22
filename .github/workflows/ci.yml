@@ -21,10 +21,14 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         run: ./gradlew --no-daemon clean build
-      - name: Upload test results
+      - name: Upload verification reports
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: test-results
-          path: build/test-results/
-
+          name: verification-reports
+          if-no-files-found: warn
+          path: |
+            build/test-results/
+            build/reports/tests/
+            build/reports/spotbugs/
+            build/reports/jacoco/
