@@ -191,9 +191,9 @@ public class CliArchiBackend implements ArchiBackend {
         }
 
         if (isCiEnvironment()) {
-            String home = System.getenv("HOME");
-            if (home != null && !home.isBlank()) {
-                String ciHome = home + "/.local/archi";
+            String userHome = System.getProperty("user.home");
+            if (userHome != null && !userHome.isBlank()) {
+                String ciHome = userHome + "/.local/archi";
                 log.info("Detected CI environment, defaulting ARCHI_HOME to {}", ciHome);
                 return ciHome;
             }
