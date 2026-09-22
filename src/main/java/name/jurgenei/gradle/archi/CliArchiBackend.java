@@ -190,6 +190,15 @@ public class CliArchiBackend implements ArchiBackend {
             return "/opt/archi";
         }
 
+        if (isCiEnvironment()) {
+            String home = System.getenv("HOME");
+            if (home != null && !home.isBlank()) {
+                String ciHome = home + "/.local/archi";
+                log.info("Detected CI environment, defaulting ARCHI_HOME to {}", ciHome);
+                return ciHome;
+            }
+        }
+
         log.warn("Could not locate Archi installation. Set ARCHI_HOME environment variable.");
         return "";
     }
@@ -209,6 +218,12 @@ public class CliArchiBackend implements ArchiBackend {
         } catch (IOException ignored) {
             return "";
         }
+    }
+
+    private static boolean isCiEnvironment() {
+        return "true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))
+                || "true".equalsIgnoreCase(System.getenv("TF_BUILD"))
+                || "true".equalsIgnoreCase(System.getenv("CI"));
     }
 
     private File resolveArchiRuntime(File buildDir, Logger log) {

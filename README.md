@@ -154,6 +154,21 @@ Before launching Archi, the launcher installs all bundled `.archiplugin` files w
 
 - `bin/install-archiplugin.sh`
 
+Bundled plugin set is part of published plugin artifact (`archi/plugins/*.archiplugin`) and is treated as compatibility requirement for CI usage.
+
+On CI agents (`GITHUB_ACTIONS=true` or `TF_BUILD=true`), launcher can auto-provision Archi when missing.
+Defaults:
+
+- install location: `$HOME/.local/archi`
+- release tag/version source: `conf/archi-release.env`
+
+Override knobs:
+
+- `ARCHI_AUTO_INSTALL=false` disable auto-provision
+- `ARCHI_HOME=/custom/path` use custom install/runtime location
+- `ARCHI_RELEASE_TAG`, `ARCHI_VERSION` override default download coordinates
+- `ARCHI_DOWNLOAD_URL` fully override download URL
+
 The default script for exports is:
 
 - `ajs/export-assets.ajs`
@@ -184,6 +199,10 @@ docker compose run --rm archi
 ```
 
 This uses `xvfb-run` for headless Linux execution and writes exports under `build/archi-export`.
+
+### CI (GitHub Actions / Azure DevOps)
+
+If Archi executable is not present and CI environment is detected, launcher auto-installs Archi and then installs bundled plugins before running export script.
 
 ### Local Docker Run + Verification
 

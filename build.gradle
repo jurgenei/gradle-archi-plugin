@@ -167,7 +167,7 @@ tasks.named('jacocoTestCoverageVerification') {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.0
+                minimum = 0.20
             }
         }
     }
@@ -179,58 +179,35 @@ tasks.register('coverage') {
     dependsOn tasks.named('jacocoTestCoverageVerification')
 }
 
-tasks.named('check') {
-    dependsOn tasks.named('jacocoTestCoverageVerification')
-}
-
-jacoco {
-    toolVersion = '0.8.12'
-}
-
-tasks.named('test') {
-    finalizedBy tasks.named('jacocoTestReport')
-}
-
-tasks.named('jacocoTestReport') {
-    dependsOn tasks.named('test')
-    classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
-    sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
-    reports {
-        xml.required = true
-        html.required = true
-        csv.required = false
-    }
-}
-
-tasks.named('jacocoTestCoverageVerification') {
-    dependsOn tasks.named('jacocoTestReport')
-    classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
-    sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
-    violationRules {
-        rule {
-            element = 'BUNDLE'
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.20
+tasks.register('verifyBundledArchiPlugins') {
+    group = 'verification'
+    description = 'Fails build when packaged Archi plugin bundle is missing or empty.'
+    def jarFileProvider = tasks.named('jar').flatMap { it.archiveFile }
+    dependsOn tasks.named('jar')
+    inputs.file(jarFileProvider)
+    doLast {
+        def jarFile = jarFileProvider.get().asFile
+        def found = false
+        def zip = new java.util.zip.ZipFile(jarFile)
+        try {
+            def entries = zip.entries()
+            while (entries.hasMoreElements()) {
+                def entry = entries.nextElement()
+                if (!entry.isDirectory() && entry.name ==~ /archi\/plugins\/[^\/]+\.archiplugin/) {
+                    found = true
+                    break
+                }
             }
+        } finally {
+            zip.close()
+        }
+        if (!found) {
+            throw new GradleException("No bundled .archiplugin files found in artifact: ${jarFile}")
         }
     }
 }
 
-if (tasks.findByName('coverage') == null) {
-    tasks.register('coverage') {
-        group = 'verification'
-        description = 'Runs tests, generates JaCoCo report, and verifies minimum coverage threshold.'
-        dependsOn tasks.named('jacocoTestCoverageVerification')
-    }
-} else {
-    tasks.named('coverage') {
-        dependsOn tasks.named('jacocoTestCoverageVerification')
-    }
-}
-
 tasks.named('check') {
     dependsOn tasks.named('jacocoTestCoverageVerification')
+    dependsOn tasks.named('verifyBundledArchiPlugins')
 }
-
