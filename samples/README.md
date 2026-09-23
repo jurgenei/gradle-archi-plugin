@@ -12,20 +12,12 @@ This directory contains small consumer projects showing how to use the `name.jur
 
 ## Samples
 
-- `stub-basic/` - Fast local run using `stub true` (no Archi installation needed).
-- `cli-host-archi/` - Real Archi run on host with `stub false` and script-based export.
+- `cli-host-archi/` - Real Archi run on host with script-based export.
 - `docker-export/` - Uses plugin config and a helper task to run the same Docker export test locally.
 
 ## Run Samples
 
-### 1) Stub sample
-
-```bash
-cd samples/stub-basic
-gradle --no-daemon archi
-```
-
-### 2) Host Archi sample
+### 1) Host Archi sample
 
 Set your model path and (optionally) `ARCHI_HOME` first:
 
@@ -36,7 +28,7 @@ export ARCHI_HOME="$HOME/Applications/Archi.app"
 gradle --no-daemon archi
 ```
 
-### 3) Docker export sample
+### 2) Docker export sample
 
 ```bash
 cd samples/docker-export
@@ -45,4 +37,3 @@ gradle --no-daemon dockerArchiExport
 ```
 
 The Docker sample delegates to `scripts/docker-local-test.sh` and verifies XML/XLSX/PDF outputs.
-

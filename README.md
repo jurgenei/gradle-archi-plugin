@@ -16,9 +16,7 @@ The plugin contributes one task named `archi` (type `name.jurgenei.gradle.archi.
 ## What It Does
 
 - Registers a configurable `archi` task.
-- Supports two execution backends:
-  - `stub = true` (default): deterministic local/test behavior, no external Archi dependency.
-  - `stub = false`: runs bundled launcher script from plugin resources.
+- Runs bundled launcher script from plugin resources to execute Archi export pipeline.
 - Accepts additional CLI args and environment variables.
 - Writes one output file for each task execution.
 
@@ -45,8 +43,6 @@ plugins {
 archi {
     input file('simple-helix.archimate')
     output file('build/simple-helix.export.xml')
-    // default is true (stub backend)
-    // stub false
 }
 ```
 
@@ -82,7 +78,6 @@ plugins {
 
 - `input(Object)` **required**: input model file.
 - `output(Object)` **required**: export output file.
-- `stub(boolean)` optional, default `true`.
 - `script(Object)` optional: adds `--script.runScript <value>`.
 - `excel(Object)` optional: adds `--excel.export <value>`.
 - `arg(String)` optional, repeatable: appends raw CLI args.
@@ -99,48 +94,35 @@ Ready-to-run sample consumer projects are available in:
 
 - `samples/`
 
-### 1) Stub Mode (Safe Local/CI Default)
+### 1) Bundled Launcher Mode
 
 ```groovy
 archi {
     input file('src/main/archi/model.archimate')
     output file('build/model.export.xml')
-    stub true
-}
-```
-
-### 2) CLI Mode (Bundled Launcher)
-
-```groovy
-archi {
-    input file('src/main/archi/model.archimate')
-    output file('build/model.export.xml')
-    stub false
     script file('scripts/export-assets.ajs')
     arg '--verbose'
     env 'PACKAGE_NAME', 'simple-helix'
 }
 ```
 
-### 3) Register Multiple Archi Tasks
+### 2) Register Multiple Archi Tasks
 
 ```groovy
 tasks.register('archiCatalog', name.jurgenei.gradle.archi.ArchiTask) {
     input file('catalog/catalog.archimate')
     output file('build/catalog.export.xml')
-    stub false
 }
 
 tasks.register('archiLandscape', name.jurgenei.gradle.archi.ArchiTask) {
     input file('landscape/landscape.archimate')
     output file('build/landscape.export.xml')
-    stub true
 }
 ```
 
 ## Runtime Behavior
 
-When `stub = false`, the plugin extracts bundled runtime resources under:
+The plugin extracts bundled runtime resources under:
 
 - `build/archi-runtime/`
 
@@ -182,8 +164,6 @@ It loads the model from `ARCHI_FILE` and exports PDF/XML/XLSX artifacts into `EX
 ```bash
 ./gradlew archi
 ```
-
-Use `stub false` in your `archi { ... }` task configuration.
 
 Set `ARCHI_HOME` if Archi is not in a default location:
 
@@ -254,7 +234,6 @@ Run static compile checks:
 - `src/main/java/name/jurgenei/gradle/archi/ArchiTask.java`
 - `src/main/java/name/jurgenei/gradle/archi/ArchiBackend.java`
 - `src/main/java/name/jurgenei/gradle/archi/CliArchiBackend.java`
-- `src/main/java/name/jurgenei/gradle/archi/StubArchiBackend.java`
 - `src/main/java/name/jurgenei/gradle/archi/ArchimateRunner.java`
 
 ## Testing
@@ -274,7 +253,6 @@ Run:
 
 - **Task not found (`archi`)**: ensure plugin id `name.jurgenei.gradle.archi` is applied.
 - **Missing input/output error**: configure both `input` and `output` in task configuration.
-- **CLI mode issues**: set `stub true` first to validate wiring, then switch to `stub false`.
 - **Path problems**: prefer `file('relative/path')` over raw strings for portability.
 
 ## License

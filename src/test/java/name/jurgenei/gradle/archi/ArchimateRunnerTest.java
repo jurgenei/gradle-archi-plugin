@@ -18,19 +18,6 @@ class ArchimateRunnerTest {
     private static final Logger TEST_LOGGER = Logging.getLogger(ArchimateRunnerTest.class);
 
     @Test
-    void stubShouldProduceOutput() throws Exception {
-        File dir = Files.createTempDirectory("archi").toFile();
-        File input = new File(dir, "in.xml");
-        Files.writeString(input.toPath(), "<a></a>");
-        File output = new File(dir, "out.xml");
-
-        new ArchimateRunner(new StubArchiBackend()).run(dir, new File(dir, "build"), TEST_LOGGER, input, output, null, null);
-
-        assertTrue(output.exists());
-        assertTrue(Files.readString(output.toPath()).contains("processed"));
-    }
-
-    @Test
     void cliShouldProduceOutput() throws Exception {
         File dir = Files.createTempDirectory("archi-cli").toFile();
         File input = new File(dir, "in.archimate");
@@ -83,5 +70,4 @@ class ArchimateRunnerTest {
         }
     }
 }
-
 
