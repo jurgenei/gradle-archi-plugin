@@ -23,9 +23,9 @@ class ArchiTaskAndPluginTest {
     void pluginRegistersArchiTaskWithDirectoryConventions() {
         Project project = ProjectBuilder.builder().withProjectDir(tempDir.toFile()).build();
 
-        // Cover explicit constructor path.
-        new ArchiGradlePlugin();
-        project.getPlugins().apply(ArchiGradlePlugin.class);
+        // Cover explicit constructor and apply path.
+        ArchiGradlePlugin plugin = new ArchiGradlePlugin();
+        plugin.apply(project);
 
         ArchiTask task = (ArchiTask) project.getTasks().getByName("archi");
 
