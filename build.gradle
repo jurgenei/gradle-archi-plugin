@@ -1,6 +1,6 @@
 plugins {
     id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '2.1.1'
+    id 'com.gradle.plugin-publish' version '2.2.1'
     id 'jacoco'
     id 'maven-publish'
     id 'signing'
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'name.jurgenei.gradle'
-version = '0.1.8'
+version = '0.1.10'
 
 repositories {
     mavenCentral()
@@ -41,35 +41,30 @@ gradlePlugin {
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId = 'gradle-archi-plugin-impl'
+    publications.withType(MavenPublication).configureEach {
+        pom {
+            name = 'Archi Plugin'
+            description = 'Gradle plugin for Archi architecture description'
+            url = 'https://github.com/jurgenei/gradle-archi-plugin'
 
-            pom {
-                name = 'Archi Plugin'
-                description = 'Gradle plugin for Archi architecture description'
+            licenses {
+                license {
+                    name = 'MIT License'
+                    url = 'https://opensource.org/licenses/MIT'
+                }
+            }
+
+            developers {
+                developer {
+                    id = 'jurgenei'
+                    name = 'Jurgen Hildebrand'
+                }
+            }
+
+            scm {
+                connection = 'scm:git:https://github.com/jurgenei/gradle-archi-plugin.git'
+                developerConnection = 'scm:git:ssh://git@github.com/jurgenei/gradle-archi-plugin.git'
                 url = 'https://github.com/jurgenei/gradle-archi-plugin'
-
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = 'jurgenei'
-                        name = 'Jurgen Hildebrand'
-                    }
-                }
-
-                scm {
-                    connection = 'scm:git:https://github.com/jurgenei/gradle-archi-plugin.git'
-                    developerConnection = 'scm:git:ssh://git@github.com/jurgenei/gradle-archi-plugin.git'
-                    url = 'https://github.com/jurgenei/gradle-archi-plugin'
-                }
             }
         }
     }
