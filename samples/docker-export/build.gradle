@@ -13,7 +13,6 @@ def exportName = modelFile.name.endsWith('.archimate') ? modelFile.name - '.arch
 archi {
     input modelFile
     output file("build/archi-export/${exportName}.export.xml")
-    stub false
     env 'ARCHI_FILE', modelFile
     env 'PACKAGE_NAME', exportName
     env 'EXPORT_DIR', file('build/archi-export')
@@ -25,4 +24,3 @@ tasks.register('dockerArchiExport', Exec) {
 
     commandLine 'bash', '../../scripts/docker-local-test.sh', modelFile.absolutePath
 }
-

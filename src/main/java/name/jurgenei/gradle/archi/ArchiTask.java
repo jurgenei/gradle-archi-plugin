@@ -40,14 +40,6 @@ public abstract class ArchiTask extends DefaultTask {
     public abstract Property<File> getOutputFile();
 
     /**
-     * Chooses stub backend when true, CLI backend when false.
-     *
-     * @return stub toggle property.
-     */
-    @Input
-    public abstract Property<Boolean> getStub();
-
-    /**
      * Optional script path passed to Archi.
      *
      * @return script property.
@@ -99,7 +91,6 @@ public abstract class ArchiTask extends DefaultTask {
      * Creates task with default conventions.
      */
     public ArchiTask() {
-        getStub().convention(true);
         getArgs().convention(List.of());
         getEnvs().convention(Map.of());
         getScript().convention("");
@@ -122,15 +113,6 @@ public abstract class ArchiTask extends DefaultTask {
      */
     public void output(Object value) {
         getOutputFile().set(getProject().file(value));
-    }
-
-    /**
-     * Sets stub backend usage.
-     *
-     * @param value true to use stub backend.
-     */
-    public void stub(boolean value) {
-        getStub().set(value);
     }
 
     /**
@@ -198,7 +180,7 @@ public abstract class ArchiTask extends DefaultTask {
         File inputFile = getInputFile().getOrNull();
         File outputFile = getOutputFile().getOrNull();
 
-        ArchiBackend backend = getStub().get() ? new StubArchiBackend() : new CliArchiBackend();
+        ArchiBackend backend = new CliArchiBackend();
         new ArchimateRunner(backend).run(
                 getProjectDir().get().getAsFile(),
                 getBuildDir().get().getAsFile(),
@@ -210,4 +192,3 @@ public abstract class ArchiTask extends DefaultTask {
         );
     }
 }
-

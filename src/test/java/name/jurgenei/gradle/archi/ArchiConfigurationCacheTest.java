@@ -27,7 +27,6 @@ class ArchiConfigurationCacheTest {
                 testProjectDir.resolve("build.gradle"),
                 "plugins { id 'name.jurgenei.gradle.archi' }\n" +
                         "tasks.named('archi') {\n" +
-                        "  stub = true\n" +
                         "  input file('in.xml')\n" +
                                         "  output \"$buildDir/out.xml\"\n" +
                         "}\n"
@@ -64,4 +63,3 @@ class ArchiConfigurationCacheTest {
         );
     }
 }
-
