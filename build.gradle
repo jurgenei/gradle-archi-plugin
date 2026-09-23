@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'name.jurgenei.gradle'
-version = '0.1.6'
+version = '0.1.7'
 
 repositories {
     mavenCentral()
@@ -140,6 +140,16 @@ tasks.register('allSecurityChecks') {
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
     finalizedBy tasks.named('jacocoTestReport')
+}
+
+tasks.matching { it.name == 'sourcesJar' }.configureEach {
+    // Runtime binaries are required in plugin JAR, but must not be part of sources artifact.
+    exclude('archi/plugins/**/*.archiplugin')
+}
+
+tasks.named('publishPlugins') {
+    // Publish task talks to Plugin Portal; disable CC to avoid stale validate-only results.
+    notCompatibleWithConfigurationCache('Network publication and remote version checks must execute every run.')
 }
 
 jacoco {
