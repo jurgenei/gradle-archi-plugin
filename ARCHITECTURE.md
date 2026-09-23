@@ -1,7 +1,7 @@
 # Architecture Overview gradle-archi-plugin
 
 ```mermaid
-flowchart TD
+flowchart LR
 
 subgraph group_plugin["Gradle integration"]
   node_plugin["Plugin registration"]
